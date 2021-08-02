@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: development
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+
+feign:
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+
+marvelApiKey: "62c153e14951e8359f6e80b80bab2b17"
+marvelHash: "f0b145a263cbb6aa36744bdcfe7f4e0f"
