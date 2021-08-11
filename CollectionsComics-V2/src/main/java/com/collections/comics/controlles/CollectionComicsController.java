@@ -7,6 +7,7 @@ import com.collections.comics.models.exception.IncorrectUserIdException;
 import com.collections.comics.models.requests.AddComicRequest;
 import com.collections.comics.models.responses.AddComicResponse;
 import com.collections.comics.models.responses.CreateUserResponse;
+import com.collections.comics.models.responses.ErrorResponse;
 import com.collections.comics.models.responses.ListComicsResponse;
 import com.collections.comics.repositories.ComicsRepository;
 import com.collections.comics.repositories.CreatorsRepository;
@@ -53,8 +54,9 @@ public class CollectionComicsController {
     @Transactional
     public ResponseEntity createUser(@RequestBody @Valid User newUser, Errors errors) {
         if (errors.hasErrors()) {
-            String e = errors.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(","));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
+            List<String> e = errors.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
+            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
         try {
             if(usersRepository.existsUserByEmailOrCpf(newUser.getEmail(), newUser.getCpf())){
@@ -64,7 +66,8 @@ public class CollectionComicsController {
             CreateUserResponse createUserResponse = new CreateUserResponse(newUser.getUserId());
             return ResponseEntity.ok(createUserResponse);
         }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 
@@ -75,8 +78,9 @@ public class CollectionComicsController {
         Long comicId = comicsRegisterRequest.getComicId();
 
         if (errors.hasErrors()) {
-            String e = errors.getAllErrors().stream().map(ObjectError::toString).collect(Collectors.joining(","));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
+            List<String> e = errors.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
+            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
         try {
             final MarvelClient marvelClient = MarvelClient.connect();
@@ -103,7 +107,8 @@ public class CollectionComicsController {
 
             return ResponseEntity.ok(addComicResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 
@@ -121,7 +126,8 @@ public class CollectionComicsController {
 
             return ResponseEntity.ok(listComicsResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 }

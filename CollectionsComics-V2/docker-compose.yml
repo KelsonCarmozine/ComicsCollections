@@ -11,13 +11,13 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=collectionComicsDB
+      - POSTGRES_DB=collectionComics
 
   app:
     image: 'collection/comics:latest'
     build:
       context: .
-    container_name: app
+    container_name: comic
     depends_on:
       - postgres
     expose:
